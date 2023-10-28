@@ -1,0 +1,8 @@
+# shuttle-template-actix, gitignore file
+
+# Visual Studio Code settings
+.vscode
+
+# General repo items
+/target
+Secrets*.toml

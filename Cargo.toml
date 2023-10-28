@@ -1,0 +1,37 @@
+[package]
+name = "rivet-head-api"
+version = "1.0.0"
+edition = "2021"
+description = "The API for the rivet-head app, hosted on Shuttle"
+readme = "README.md"
+authors = ["Jeffery D. Mitchell", "<sentinel1909@jeff-mitchell.dev"]
+repository = "https://github.com/sentinel1909/shuttle-template-actix"
+license = 'MIT'
+keywords = ["actix, shuttle"]
+categories = ["API"]
+publish = false
+
+[[bin]]
+name = "rivet-head-api"
+path = "src/bin/httpd.rs"
+
+[lib]
+name="rivet_head_api_lib"
+path = "src/lib/lib.rs"
+
+[dependencies]
+actix-cors = "0.6.4"
+actix-web = "4.4.0"
+anyhow = "1.0.75"
+chrono = { version = "0.4.31", features = ["serde"] }
+futures = "0.3.28"
+serde = { version ="1", features = [ "derive"] }
+shuttle-actix-web = "0.30.1"
+shuttle-runtime = "0.30.1"
+shuttle-secrets = "0.30.1"
+shuttle-shared-db = { version = "0.30.1", features = [ "postgres"] }
+sqlx = { version = "0.7.2", features = [ "chrono", "runtime-tokio-rustls", "postgres", "uuid" ] }
+tokio = "1.33.0"
+tracing = "0.1.40"
+tracing-actix-web = "0.7.8"
+uuid = { version = "1.5.0", features = [ "v4" ] }
