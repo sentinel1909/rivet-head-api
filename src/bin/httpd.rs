@@ -2,6 +2,7 @@
 
 // dependencies
 use actix_cors::Cors;
+use actix_governor::{Governor, GovernorConfigBuilder};
 use actix_web::http::header;
 use actix_web::web::{self, ServiceConfig};
 use anyhow::anyhow;
@@ -30,6 +31,7 @@ async fn main(
         .map_err(CustomError::new)?;
 
     // load the API key from Secrets.toml
+    info!("Loading the API key...");
     let api_key = if let Some(secret) = secret_store.get("RH_API_KEY") {
         secret
     } else {
@@ -37,6 +39,7 @@ async fn main(
     };
 
     // create the app state to hold the database pool and the API key
+    info!("Creating the app state...");
     let state = web::Data::new(AppState { pool, api_key });
 
     // create the cross-origin resource sharing config and app routes
@@ -50,12 +53,20 @@ async fn main(
             .allowed_header(header::CONTENT_TYPE)
             .max_age(3600);
 
+        // governor configuration
+        let governor_conf = GovernorConfigBuilder::default()
+            .per_second(2)
+            .burst_size(5)
+            .finish()
+            .expect("Unable to create governor configuration.");
+
         // route table
         cfg.service(
             web::scope("/api")
                 .wrap(TracingLogger::default())
                 .wrap(cors)
                 .wrap(ApiKey)
+                .wrap(Governor::new(&governor_conf))
                 .service(info)
                 .service(health_check)
                 .service(diary_delete)
