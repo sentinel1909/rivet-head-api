@@ -45,7 +45,7 @@ async fn main(
     // create the cross-origin resource sharing config and app routes
     let config = move |cfg: &mut ServiceConfig| {
         // create cross-origin resource sharing config
-        let cors = Cors::default()
+        let cors_conf = Cors::default()
             .allowed_origin("https://rivet-head-api.shuttleapp.rs")
             .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".shuttleapp.rs"))
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
@@ -64,7 +64,7 @@ async fn main(
         cfg.service(
             web::scope("/api")
                 .wrap(TracingLogger::default())
-                .wrap(cors)
+                .wrap(cors_conf)
                 .wrap(ApiKey)
                 .wrap(Governor::new(&governor_conf))
                 .service(info)
