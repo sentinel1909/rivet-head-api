@@ -9,11 +9,12 @@ use actix_web::{
     HttpResponse, Result,
 };
 use chrono::prelude::*;
+use serde::Deserialize;
 use std::str::FromStr;
 use uuid::Uuid;
 
 // struct to represent the incoming form data for a diary entry
-#[derive(serde::Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct FormData {
     pub band_content: String,
     pub album_content: String,
@@ -21,12 +22,13 @@ pub struct FormData {
 }
 
 // struct to represent the incoming form data for an updated thoughts entry
-#[derive(serde::Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct UpdatedFormData {
     pub thoughts_content: String,
 }
 
 // api/diary DELETE endpoint handler, deletes an entry with a specified ID from the database
+#[tracing::instrument(name = "Delete Diary Entry", skip())]
 #[delete("/diary/delete/{id}")]
 async fn diary_delete(
     item_id: web::Path<String>,
@@ -45,6 +47,7 @@ async fn diary_delete(
 }
 
 // api/diary GET endpoint handler, returns all the diary entries stored in the diary database table
+#[tracing::instrument(name = "Get Diary Entries", skip())]
 #[get("/diary")]
 async fn diary_get(state: web::Data<AppState>) -> Result<HttpResponse> {
     let result = sqlx::query_as::<_, DiaryRecord>("SELECT * FROM diary")
@@ -58,6 +61,7 @@ async fn diary_get(state: web::Data<AppState>) -> Result<HttpResponse> {
 }
 
 // api/diary POST endpoint handler, takes form data received for a new diary entry and stores it in the diary database table
+#[tracing::instrument(name = "Add Diary Entry", skip())]
 #[post("/diary/new")]
 async fn diary_post(state: web::Data<AppState>, form: web::Form<FormData>) -> Result<HttpResponse> {
     let FormData {
@@ -92,6 +96,7 @@ async fn diary_post(state: web::Data<AppState>, form: web::Form<FormData>) -> Re
 }
 
 // api/diary PUT endpoint handler, takes form data received for an updated thoughts field and updates the corresponding item id specified in the query paramters
+#[tracing::instrument(name = "Update Diary Entry", skip())]
 #[put("/diary/update/{id}")]
 async fn diary_put(
     item_id: web::Path<String>,

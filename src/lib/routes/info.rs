@@ -34,6 +34,7 @@ struct InfoResponse {
 }
 
 // info endpoint handler
+#[tracing::instrument(name = "Info", skip())]
 #[get("/info")]
 async fn info() -> impl Responder {
     let api_paths = Paths {

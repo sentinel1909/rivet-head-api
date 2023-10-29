@@ -10,6 +10,7 @@ struct HealthCheckResponse {
 }
 
 // health_check endpoint
+#[tracing::instrument(name = "Health Check", skip())]
 #[get("/health_check")]
 async fn health_check() -> impl Responder {
     let health_check_response = HealthCheckResponse {

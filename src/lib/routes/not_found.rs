@@ -10,6 +10,7 @@ struct NotFoundResponse {
     message: String,
 }
 
+#[tracing::instrument(name = "Not Found", skip())]
 pub async fn not_found() -> Result<HttpResponse> {
     let not_found_response = NotFoundResponse {
         message: "Resource not found".to_string(),
