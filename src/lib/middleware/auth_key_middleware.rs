@@ -3,9 +3,10 @@
 // dependencies
 use crate::domain::appstate::AppState;
 use actix_web::{
+    body::EitherBody,
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
     web::Data,
-    Error,
+    Error, HttpResponse,
 };
 use std::{
     future::{ready, Future, Ready},
@@ -23,7 +24,7 @@ where
     S::Future: 'static,
     B: 'static,
 {
-    type Response = ServiceResponse<B>;
+    type Response = ServiceResponse<EitherBody<B>>;
     type Error = Error;
     type Transform = ApiKeyMiddleware<S>;
     type InitError = ();
@@ -47,38 +48,34 @@ where
     S::Future: 'static,
     B: 'static,
 {
-    type Response = ServiceResponse<B>;
+    type Response = ServiceResponse<EitherBody<B>>;
     type Error = Error;
     type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>>>>;
 
     forward_ready!(service);
 
-    fn call(&self, req: ServiceRequest) -> Self::Future {
+    fn call(&self, request: ServiceRequest) -> Self::Future {
         // get the x-api-key header from the request
-        let x_api_key = req
+        let x_api_key = request
             .headers()
             .get("x-api-key")
             .and_then(|value| value.to_str().ok());
 
         // get the api key from the app state
-        let api_key = req
+        let api_key = request
             .app_data::<Data<AppState>>()
             .map(|data| data.api_key.clone());
 
         // check if the api key is valid
         if x_api_key != api_key.as_deref() {
-            return Box::pin(async move {
-                Err(actix_web::error::ErrorUnauthorized(
-                    "Unauthorized: Invalid API key",
-                ))
-            });
+            // return a 401 unauthorized response
+            let (request, _payload) = request.into_parts();
+            let response = HttpResponse::Unauthorized().finish().map_into_right_body();
+            return Box::pin(async move { Ok(ServiceResponse::new(request, response)) });
         }
 
-        // call the service
-        let fut = self.service.call(req);
-        Box::pin(async move {
-            let res = fut.await?;
-            Ok(res)
-        })
+        // return the request if the API key is valid
+        let response = self.service.call(request);
+        Box::pin(async move { response.await.map(ServiceResponse::map_into_left_body) })
     }
 }
