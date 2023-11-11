@@ -10,7 +10,8 @@ use rivet_head_api_lib::domain::appstate::AppState;
 use rivet_head_api_lib::instrumentation::{get_subscriber, init_subscriber};
 use rivet_head_api_lib::middleware::ApiKey;
 use rivet_head_api_lib::routes::{
-    diary_delete, diary_get, diary_post, diary_put, health_check, info, not_found,
+    diary_album_put, diary_delete, diary_get, diary_post, diary_thoughts_put, health_check, info,
+    not_found,
 };
 use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_runtime::CustomError;
@@ -79,7 +80,8 @@ async fn main(
                 .service(diary_delete)
                 .service(diary_get)
                 .service(diary_post)
-                .service(diary_put)
+                .service(diary_album_put)
+                .service(diary_thoughts_put)
                 .default_service(web::route().to(not_found))
                 .app_data(state),
         );

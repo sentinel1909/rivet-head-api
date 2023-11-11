@@ -23,8 +23,14 @@ pub struct FormData {
 
 // struct to represent the incoming form data for an updated thoughts entry
 #[derive(Debug, Deserialize)]
-pub struct UpdatedFormData {
+pub struct UpdatedThoughtsFormData {
     pub thoughts_content: String,
+}
+
+// struct to represent the incoming form data for an updated album entry
+#[derive(Debug, Deserialize)]
+pub struct UpdatedAlbumFormData {
+    pub album_content: String,
 }
 
 // api/diary DELETE endpoint handler, deletes an entry with a specified ID from the database
@@ -96,24 +102,47 @@ async fn diary_post(state: web::Data<AppState>, form: web::Form<FormData>) -> Re
 }
 
 // api/diary PUT endpoint handler, takes form data received for an updated thoughts field and updates the corresponding item id specified in the query paramters
-#[tracing::instrument(name = "Update Diary Entry", skip())]
-#[put("/diary/update/{id}")]
-async fn diary_put(
+#[tracing::instrument(name = "Update Diary Entry - Album", skip())]
+#[put("/diary/update/album/{id}")]
+async fn diary_album_put(
     item_id: web::Path<String>,
-    updated_item_content: web::Form<UpdatedFormData>,
+    updated_album_content: web::Form<UpdatedAlbumFormData>,
+    state: web::Data<AppState>,
+) -> Result<HttpResponse> {
+    let id = Uuid::from_str(&item_id).expect("Invalid UUID, cannot find record to update...");
+
+    let result = sqlx::query("UPDATE diary SET updated_at = $1, album = $2 WHERE id = $3")
+        .bind(Some(Utc::now()))
+        .bind(&updated_album_content.album_content)
+        .bind(id)
+        .execute(&state.pool)
+        .await;
+
+    match result {
+        Ok(_) => Ok(HttpResponse::Ok().json("Diary item album content updated...".to_string())),
+        Err(e) => Ok(HttpResponse::InternalServerError().json(e.to_string())),
+    }
+}
+
+// api/diary PUT endpoint handler, takes form data received for an updated thoughts field and updates the corresponding item id specified in the query paramters
+#[tracing::instrument(name = "Update Diary Entry - Thoughts", skip())]
+#[put("/diary/update/thoughts/{id}")]
+async fn diary_thoughts_put(
+    item_id: web::Path<String>,
+    updated_thoughts_content: web::Form<UpdatedThoughtsFormData>,
     state: web::Data<AppState>,
 ) -> Result<HttpResponse> {
     let id = Uuid::from_str(&item_id).expect("Invalid UUID, cannot find record to update...");
 
     let result = sqlx::query("UPDATE diary SET updated_at = $1, thoughts = $2 WHERE id = $3")
         .bind(Some(Utc::now()))
-        .bind(&updated_item_content.thoughts_content)
+        .bind(&updated_thoughts_content.thoughts_content)
         .bind(id)
         .execute(&state.pool)
         .await;
 
     match result {
-        Ok(_) => Ok(HttpResponse::Ok().json("Diary item updated...".to_string())),
+        Ok(_) => Ok(HttpResponse::Ok().json("Diary item thoughts content updated...".to_string())),
         Err(e) => Ok(HttpResponse::InternalServerError().json(e.to_string())),
     }
 }
