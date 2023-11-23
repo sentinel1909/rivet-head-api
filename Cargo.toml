@@ -28,12 +28,12 @@ chrono = { version = "0.4.31", features = ["serde"] }
 futures = "0.3.28"
 garde = "0.16.2"
 serde = { version ="1", features = [ "derive"] }
-shuttle-actix-web = "0.32.0"
-shuttle-runtime = { version = "0.32.0", default-features = false  }
-shuttle-secrets = "0.32.0"
-shuttle-shared-db = { version = "0.32.0", features = [ "postgres"] }
+shuttle-actix-web = "0.34.0"
+shuttle-runtime = { version = "0.34.0", default-features = false  }
+shuttle-secrets = "0.34.0"
+shuttle-shared-db = { version = "0.34.0", features = [ "postgres"] }
 sqlx = { version = "0.7.2", features = [ "chrono", "runtime-tokio-rustls", "postgres", "uuid" ] }
-tokio = "1.33.0"
+tokio = "1.34.0"
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.17", features = [ "registry", "env-filter"] }
 tracing-bunyan-formatter = "0.3.9"
