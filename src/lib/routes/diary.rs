@@ -101,7 +101,7 @@ async fn diary_post(state: web::Data<AppState>, form: web::Form<FormData>) -> Re
     }
 }
 
-// api/diary PUT endpoint handler, takes form data received for an updated thoughts field and updates the corresponding item id specified in the query paramters
+// api/diary PUT endpoint handler, takes form data received for an updated album field and updates the corresponding item id specified in the query paramters
 #[tracing::instrument(name = "Update Diary Entry - Album", skip())]
 #[put("/diary/update/album/{id}")]
 async fn diary_album_put(
