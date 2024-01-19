@@ -11,7 +11,6 @@ use rivet_head_api_lib::instrumentation::{get_subscriber, init_subscriber};
 use rivet_head_api_lib::middleware::ApiKey;
 use rivet_head_api_lib::routes::{
     diary_album_put, diary_delete, diary_get, diary_post, diary_thoughts_put, health_check, info,
-    not_found,
 };
 use shuttle_actix_web::ShuttleActixWeb;
 use shuttle_runtime::CustomError;
@@ -49,18 +48,18 @@ async fn main(
     let state = web::Data::new(AppState { pool, api_key });
 
     // create the cross-origin resource sharing config and app routes
-    info!("Creating CORS configuration...");
     let config = move |cfg: &mut ServiceConfig| {
         // create cross-origin resource sharing config
+        info!("Creating CORS configuration...");
         let cors_conf = Cors::default()
-            .allowed_origin("https://rivet-head-api.shuttleapp.rs")
-            .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".shuttleapp.rs"))
+            .allowed_origin("https://api.rivet-head.app")
+            .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".rivet-head.app"))
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
             .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
             .allowed_header(header::CONTENT_TYPE)
             .max_age(3600);
 
-        // governor configuration
+        // create governor config
         info!("Creating governor configuration...");
         let governor_conf = GovernorConfigBuilder::default()
             .per_second(2)
@@ -68,13 +67,13 @@ async fn main(
             .finish()
             .expect("Unable to create governor configuration, unable to start API.");
 
-        // load tracing, cors, API key, and governor middleware, create app routes
+        // load tracing, cors, API key, governor, middleware, create app routes, add state
         cfg.service(
-            web::scope("/api")
+            web::scope("")
                 .wrap(TracingLogger::default())
                 .wrap(cors_conf)
-                .wrap(ApiKey)
                 .wrap(Governor::new(&governor_conf))
+                .wrap(ApiKey)
                 .service(info)
                 .service(health_check)
                 .service(diary_delete)
@@ -82,7 +81,6 @@ async fn main(
                 .service(diary_post)
                 .service(diary_album_put)
                 .service(diary_thoughts_put)
-                .default_service(web::route().to(not_found))
                 .app_data(state),
         );
     };

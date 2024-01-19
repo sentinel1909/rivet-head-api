@@ -1,6 +1,6 @@
 [package]
 name = "rivet-head-api"
-version = "1.36.0"
+version = "1.36.1"
 edition = "2021"
 description = "The API for the rivet-head app, hosted on Shuttle"
 readme = "README.md"

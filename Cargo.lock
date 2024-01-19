@@ -2325,7 +2325,7 @@ dependencies = [
 
 [[package]]
 name = "rivet-head-api"
-version = "1.36.0"
+version = "1.36.1"
 dependencies = [
  "actix-cors",
  "actix-governor",
