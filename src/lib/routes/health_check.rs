@@ -6,6 +6,7 @@ use serde::Serialize;
 // struct which embodies our health_check response in json
 #[derive(Serialize)]
 struct HealthCheckResponse {
+    code: u8,
     message: String,
 }
 
@@ -14,7 +15,8 @@ struct HealthCheckResponse {
 #[get("/health_check")]
 async fn health_check() -> impl Responder {
     let health_check_response = HealthCheckResponse {
-        message: String::from("OK"),
+        code: 200,
+        message: "Ok".to_string(),
     };
 
     HttpResponse::Ok().json(health_check_response)

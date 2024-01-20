@@ -12,9 +12,10 @@ use std::{
     future::{ready, Future, Ready},
     pin::Pin,
 };
+use serde::Serialize;
 
 // struct to represent the API key
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ApiKey;
 
 // implement the transform trait for the ApiKey struct
@@ -70,7 +71,7 @@ where
         if x_api_key != api_key.as_deref() {
             // return a 401 unauthorized response
             let (request, _payload) = request.into_parts();
-            let response = HttpResponse::Unauthorized().finish().map_into_right_body();
+            let response = HttpResponse::Unauthorized().json("Invalid API Key").map_into_right_body();
             return Box::pin(async move { Ok(ServiceResponse::new(request, response)) });
         }
 
