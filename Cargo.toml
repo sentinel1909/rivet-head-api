@@ -6,7 +6,7 @@ description = "The API for the rivet-head app, hosted on Shuttle"
 readme = "README.md"
 authors = ["Jeffery D. Mitchell", "<sentinel1909@jeff-mitchell.dev"]
 repository = "https://github.com/sentinel1909/rivet-head-api"
-license = 'MIT'
+license = "MIT"
 publish = false
 
 [[bin]]
@@ -26,10 +26,10 @@ chrono = { version = "0.4.31", features = ["serde"] }
 futures = "0.3.28"
 garde = "0.17.0"
 serde = { version ="1", features = [ "derive"] }
-shuttle-actix-web = "0.37.0"
-shuttle-runtime = { version = "0.37.0", default-features = false  }
-shuttle-secrets = "0.37.0"
-shuttle-shared-db = { version = "0.37.0", features = [ "postgres", "sqlx" ] }
+shuttle-actix-web = "0.38.0"
+shuttle-runtime = { version = "0.38.0", default-features = false  }
+shuttle-secrets = "0.38.0"
+shuttle-shared-db = { version = "0.38.0", features = [ "postgres", "sqlx" ] }
 sqlx = { version = "0.7.3", features = [ "chrono", "runtime-tokio-rustls", "postgres", "uuid" ] }
 tokio = "1.35.1"
 tracing = "0.1.40"
