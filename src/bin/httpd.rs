@@ -13,8 +13,7 @@ use rivet_head_api_lib::routes::{
     diary_album_put, diary_delete, diary_get, diary_post, diary_thoughts_put, health_check, info,
 };
 use shuttle_actix_web::ShuttleActixWeb;
-use shuttle_runtime::CustomError;
-use shuttle_secrets::SecretStore;
+use shuttle_runtime::{CustomError, SecretStore};
 use sqlx::{Executor, PgPool};
 use tracing::info;
 use tracing_actix_web::TracingLogger;
@@ -23,7 +22,7 @@ use tracing_actix_web::TracingLogger;
 #[shuttle_runtime::main]
 async fn main(
     #[shuttle_shared_db::Postgres] pool: PgPool,
-    #[shuttle_secrets::Secrets] secret_store: SecretStore,
+    #[shuttle_runtime::Secrets] secret_store: SecretStore,
 ) -> ShuttleActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
     // initialize telemetry
     let subscriber = get_subscriber("rivet-head-api".into(), "info".into(), std::io::stdout);

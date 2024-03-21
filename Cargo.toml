@@ -1,6 +1,6 @@
 [package]
 name = "rivet-head-api"
-version = "1.39.0"
+version = "1.42.0"
 edition = "2021"
 description = "The API for the rivet-head app, hosted on Shuttle"
 readme = "README.md"
@@ -20,16 +20,16 @@ path = "src/lib/lib.rs"
 [dependencies]
 actix-cors = "0.7.0"
 actix-governor = "0.5.0"
-actix-web = "4.4.1"
+actix-web = "4.5.1"
 anyhow = "1.0.75"
 chrono = { version = "0.4.31", features = ["serde"] }
 futures = "0.3.28"
 garde = "=0.17.0"
 serde = { version ="1", features = [ "derive"] }
-shuttle-actix-web = "0.39.0"
-shuttle-runtime = { version = "0.39.0", default-features = false  }
-shuttle-secrets = "0.39.0"
-shuttle-shared-db = { version = "0.39.0", features = [ "postgres", "sqlx" ] }
+shuttle-actix-web = "0.42.0"
+shuttle-runtime = { version = "0.42.0", default-features = false  }
+shuttle-secrets = "0.42.0"
+shuttle-shared-db = { version = "0.42.0", features = [ "postgres", "sqlx" ] }
 sqlx = { version = "0.7.3", features = [ "chrono", "runtime-tokio-rustls", "postgres", "uuid" ] }
 tokio = "1.35.1"
 tracing = "0.1.40"
